@@ -1,20 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { interval, Subscription } from 'rxjs';
+
 import * as Highcharts from 'highcharts'
 import HC_stock from 'highcharts/modules/stock';
 import HC_export from 'highcharts/modules/exporting';
 import HC_data from 'highcharts/modules/data';
 import HC_drag from 'highcharts/modules/drag-panes';
 import HC_indicators from 'highcharts/indicators/indicators';
+import theme from 'highcharts/themes/dark-unica';
 
-import { HttpClient } from '@angular/common/http';
-import { interval, Subscription } from 'rxjs';
-import { tick } from '@angular/core/testing';
+
 
 HC_stock(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
 HC_indicators(Highcharts);
 HC_drag(Highcharts);
+theme(Highcharts);
 
 declare var require: any;
 let Boost = require('highcharts/modules/boost');
@@ -31,14 +34,21 @@ noData(Highcharts);
   templateUrl: './output-graph.component.html',
   styleUrls: ['./output-graph.component.css']
 })
-export class OutputGraphComponent implements OnInit {
-  public apiKey: string = "qPkR3WAyaVxXgh6hFAJi";
-  public tickerUrl: string = "https://www.quandl.com/api/v3/datasets/WIKI/";
-  public tickerChoice: string = "AAPL";
+export class OutputGraphComponent implements OnInit, OnChanges {
+  public apiKey: string = 'qPkR3WAyaVxXgh6hFAJi';
+  public tickerUrl: string = 'https://www.quandl.com/api/v3/datasets/WIKI/';
+  tickerChoice: string = '';
+  tickers: string[] = ['AAPL','IBM','C','AXP', 'CVS', 'GE', 'MSFT'];
+  
 
   ngOnInit(): void {
+  }
+  ngOnChanges(): void {
+    this.getCharts(this.tickerChoice);
+  }
 
-    Highcharts.getJSON(`${this.tickerUrl}${this.tickerChoice}.json?api_key=${this.apiKey}`, function (data) {
+  getCharts(tickerSelected: string): void {
+    Highcharts.getJSON(`${this.tickerUrl}${tickerSelected}.json?api_key=${this.apiKey}`, function (data) {
       // let parsedData: [][] = data.dataset.data.map((entry) => {
       //   return entry.slice(0, 5);
       // });
@@ -82,7 +92,7 @@ export class OutputGraphComponent implements OnInit {
       Highcharts.stockChart('ohlc-chart', {
 
         title: {
-          text: `OHLC Chart (Open-High-Low-Close) for ${this.tickerChoice}`
+          text: `OHLC Chart (Open-High-Low-Close) for ${tickerSelected}`
         },
 
         subtitle: {
@@ -127,7 +137,7 @@ export class OutputGraphComponent implements OnInit {
         series: [{
           type: 'ohlc',
           id: 'first',
-          name: `${this.tickerChoice} Stock Price`,
+          name: `${tickerSelected} Stock Price`,
           data: parsedData,
           dataGrouping: {
             units: [[
@@ -170,7 +180,7 @@ export class OutputGraphComponent implements OnInit {
       Highcharts.stockChart('candle-chart', {
 
         title: {
-          text: `Candlestick Chart for ${this.tickerChoice} with Volumes in Lower Pane`
+          text: `Candlestick Chart for ${tickerSelected} with Volumes in Lower Pane`
         },
 
         subtitle: {
@@ -243,7 +253,7 @@ export class OutputGraphComponent implements OnInit {
 
         series: [{
           type: 'candlestick',
-          name: `${this.tickerChoice} Stock Price`,
+          name: `${tickerSelected} Stock Price`,
           id: 'second',
           data: parsedData,
           dataGrouping: {
