@@ -16,6 +16,13 @@
       "dom"
     ]
   },
+  "files":[
+    "node_modules/highcharts-angular/src/app/highcharts-chart.component.ts"
+  ],
+  "include": [
+    "src/**/*",
+    "node_modules/highcharts-angular/src/app/*"
+  ],
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true

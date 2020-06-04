@@ -1,0 +1,15 @@
+<div class="form-group">
+    <label for="tickerControl">Select a ticker to display: </label>
+    <select class="form-control" id="tickerControl" [(ngModel)]="tickerChoice" name="tickerControl"
+        (change)="getCharts(tickerChoice)">
+        <option value="none" selected disabled hidden>---</option>
+        <option *ngFor="let ticker of tickers" [value]="ticker">{{ticker}}</option>
+
+    </select>
+</div>
+
+<h3> {{tickerChoice}} </h3>
+
+<div id="ohlc-chart"></div>
+<br>
+<div id="candle-chart"></div>
