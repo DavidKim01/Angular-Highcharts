@@ -32,13 +32,13 @@ noData(Highcharts);
   styleUrls: ['./output-graph.component.css']
 })
 export class OutputGraphComponent implements OnInit {
+  public apiKey: string = "qPkR3WAyaVxXgh6hFAJi";
+  public tickerUrl: string = "https://www.quandl.com/api/v3/datasets/WIKI/";
+  public tickerChoice: string = "AAPL";
 
   ngOnInit(): void {
-    let apiKey: string = "qPkR3WAyaVxXgh6hFAJi";
-    let tickerUrl: string = "https://www.quandl.com/api/v3/datasets/WIKI/";
-    let tickerChoice: string = "AAPL";
 
-    Highcharts.getJSON(`${tickerUrl}${tickerChoice}.json?api_key=${apiKey}`, function (data) {
+    Highcharts.getJSON(`${this.tickerUrl}${this.tickerChoice}.json?api_key=${this.apiKey}`, function (data) {
       // let parsedData: [][] = data.dataset.data.map((entry) => {
       //   return entry.slice(0, 5);
       // });
@@ -82,7 +82,7 @@ export class OutputGraphComponent implements OnInit {
       Highcharts.stockChart('ohlc-chart', {
 
         title: {
-          text: `OHLC Chart (Open-High-Low-Close) for ${tickerChoice}`
+          text: `OHLC Chart (Open-High-Low-Close) for ${this.tickerChoice}`
         },
 
         subtitle: {
@@ -127,7 +127,7 @@ export class OutputGraphComponent implements OnInit {
         series: [{
           type: 'ohlc',
           id: 'first',
-          name: `${tickerChoice} Stock Price`,
+          name: `${this.tickerChoice} Stock Price`,
           data: parsedData,
           dataGrouping: {
             units: [[
@@ -170,7 +170,7 @@ export class OutputGraphComponent implements OnInit {
       Highcharts.stockChart('candle-chart', {
 
         title: {
-          text: `Candlestick Chart for ${tickerChoice} with Volumes in Lower Pane`
+          text: `Candlestick Chart for ${this.tickerChoice} with Volumes in Lower Pane`
         },
 
         subtitle: {
@@ -243,7 +243,7 @@ export class OutputGraphComponent implements OnInit {
 
         series: [{
           type: 'candlestick',
-          name: `${tickerChoice} Stock Price`,
+          name: `${this.tickerChoice} Stock Price`,
           id: 'second',
           data: parsedData,
           dataGrouping: {
