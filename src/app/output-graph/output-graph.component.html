@@ -2,7 +2,7 @@
     <label for="tickerControl">Select a ticker to display: </label>
     <select class="form-control" id="tickerControl" [(ngModel)]="tickerChoice" name="tickerControl"
         (change)="getCharts(tickerChoice)">
-        <option value="none" selected disabled hidden>---</option>
+        <option value="" selected disabled hidden>Choose</option>
         <option *ngFor="let ticker of tickers" [value]="ticker">{{ticker}}</option>
 
     </select>
