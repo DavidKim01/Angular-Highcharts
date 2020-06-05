@@ -1,13 +1,53 @@
 <section class="hero is-info is-large">
-    <div class="hero-body">
-      <div class="container has-text-centered">
-        <p class="title">
-          Title
-        </p>
-        <p class="subtitle">
-          Subtitle
-        </p>
-      </div>
+    <div>
+        <br>
+        <h1>NOTES AND IMPROVEMENTS THAT COULD BE MADE:</h1>
+        <br>
+        <ul>
+
+            <li>DATA WAS PULLED SUBSCRIBING TO AN OBSERVABLE USING RXJ'S TIMER FUNCTION TO SUBMIT REQUEST AT 2 MINUTE
+                INTERVALs...</li>
+            <li>HOWEVER THIS COULD POSSIBLY BE SIMPLIFIED BY UTILIZING POLLING(DATA.ENABLEPOLLING WITH A VALID
+                DATA.CSVURL) </li>
+            <li>(EXAMPLE HERE: <a target="_blank"
+                    href="https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/live-data">jsfiddle
+                    Link</a> and <a target="_blank" href="https://api.highcharts.com/highstock/data.enablePolling">API
+                    REFERENCE</a>)</li>
+
+            <br>
+            <li>DUE TO THE FAIRLY SMALL NATURE OF THIS PROJECT I DECIDED TO FORGO USING REACTIVE FORMS FOR THE DROP DOWN
+                AND INSTEAD USED A TEMPLATE DRIVEN FORM APPROACH FOR THE ONE SELECT INPUT</li>
+            <br>
+            <li>SIMILARLY THE PROJECT COULD USE SOME MORE RESTRUCTURING/REFACTORING, ALTHOUGH THERE WERE NOT MANY
+                MODULES REQUIRED SINCE THERE ARE ONLY 2 PAGES</li>
+            <li>THE ONLY COMPONENTS GENERATED FOR THIS PROJECT WERE FOR THE CHARTS PAGE(HOME) AND ABOUT PAGE(THIS ONE
+                HERE) AS WELL AS HEADER(NAVBAR) AND FOOTER COMPONENTS</li>
+            <li>ALSO, ONE SERVICE WAS GENERATED TO HANDLE THE INITIAL HTTP GET REQUESTS TO THE QUANDL API DATA SOURCES
+                (IN SRC/APP/HTTP.SERVICE.TS)</li>
+            <br>
+            <li>I CREATED A PROXY.CONF.JSON FILE NEXT TO THE PACKAGE.JSON FOLDER TO CIRCUMVENT "CORS header
+                'Access-Control-Allow-Origin' missing" ERRORS IN MY LOCAL ENVIRONMENT</li>
+            <li>THIS PROXY CONFIGURATION FILE CAN BE LAUNCHED USING THE MODIFIED "NPM START" SCRIPT DETAILED IN THE
+                PACKAGE.JSON FILE</li>
+            <br>
+            <li>FINALLY, THERES ROOM FOR IMPROVEMENT ON THE UI AS WELL. I DECIDED TO TRY OUT BULMA, AS THE CSS
+                FRAMEWORK, FOR THE FIRST TIME IN THIS PROJECT INSTEAD OF THE USUAL BOOTSTRAP. LINKS TO THAT BELOW...
+            </li>
+        </ul>
+        <br>
+        <br>
+        <h1>LINKS: </h1>
+        <br>
+        <ul>
+            <li>Bulma is a free, open source CSS framework based on Flexbox: </li>
+            <a target="_blank" href="https://bulma.io/">bulma.io</a>
+            <br>
+            <br>
+            <li>LINK TO ONE OF MY GITHUB REPOS CONTAINING VARIOUS PERSONAL PROJECTS: </li>
+            <a target="_blank" href="https://github.com/DavidKim01/PersonalProjects">GIT LINK</a>
+            <br>
+        </ul>
+        <br>
     </div>
-  
-  </section>
+
+</section>

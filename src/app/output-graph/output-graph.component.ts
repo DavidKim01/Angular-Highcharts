@@ -28,11 +28,11 @@ export class OutputGraphComponent implements OnInit, OnChanges {
   tickers: string[] = ['AAPL', 'IBM', 'C', 'AXP', 'CVS', 'GE', 'MSFT'];
   tickerChoice: string = "";
   isHidden:boolean = true;
-  updated:boolean = false;
   lastUpdated:string = '';
+  intervalVal: number = 120000;
 
   subscription: Subscription;
-  source: Observable<number> = timer(0, 12000);
+  source: Observable<number> = timer(0, this.intervalVal);
 
   constructor(private _http: HttpService) { }
 
@@ -45,7 +45,6 @@ export class OutputGraphComponent implements OnInit, OnChanges {
 
   getCharts(tickerSelected: string): void {
     this.isHidden = false;
-    this.updated = true;
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
@@ -301,7 +300,7 @@ export class OutputGraphComponent implements OnInit, OnChanges {
       },
       error => {
         console.log('Error in getting data...');
-      }).finally(()=>{this.isHidden=true; this.lastUpdated = new Date().toLocaleTimeString()})
+      }).finally(()=>{this.isHidden=true; this.lastUpdated = new Date().toLocaleTimeString();})
     );
 
     // I had initially used the Highcharts.getJSON method to fetch the data but decided to forgo this when adding the 

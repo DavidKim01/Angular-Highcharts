@@ -1,12 +1,24 @@
-<section class="hero is-info is-full has-text-centered">
+<section class="hero is-info is-fullheight has-text-centered">
     
-    <div class="hero-body">
+    <div class="back">
         <div *ngIf="!tickerChoice; then thenBlock; else elseBlock"></div>
-        <ng-template #thenBlock>        
+        <ng-template #thenBlock>
+            <br>
+            <br>        
             <h1>WELCOME!</h1>
+            <br>
             <h1>LET'S VISUALIZE SOME STOCK DATA...</h1>
+            <br>
+            <br>
         </ng-template>
         <ng-template #elseBlock></ng-template>
+        <br>    
+        <div *ngIf="lastUpdated && tickerChoice && isHidden; then updateBlock"></div>
+        <ng-template #updateBlock>
+            <br>        
+            <h1>LAST QUANDL API STOCK DATA WAS RECEIVED FOR {{tickerChoice}} AT {{lastUpdated}}</h1>
+            <p>(AUTOMATICALLY REFRESHES EVERY 2 MINUTES)</p>
+        </ng-template>
 
         <br>
         <div class="form-group">
@@ -20,11 +32,12 @@
         </div>
         <br>
         <div [hidden]="isHidden" class="lds-roller">LOADING<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        
         <br>
         <div class="graph" id="ohlc-chart"></div>
         <br>
         <div class="graph" id="candle-chart"></div>
-        {{lastUpdated}}
+
 
     </div>
 </section>
