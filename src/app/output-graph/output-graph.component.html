@@ -1,15 +1,43 @@
-<div class="form-group">
-    <label for="tickerControl">Select a ticker to display: </label>
-    <select class="form-control" id="tickerControl" [(ngModel)]="tickerChoice" name="tickerControl"
-        (change)="getCharts(tickerChoice)">
-        <option value="" selected disabled hidden>Choose</option>
-        <option *ngFor="let ticker of tickers" [value]="ticker">{{ticker}}</option>
+<section class="hero is-info is-fullheight has-text-centered">
+    
+    <div class="back">
+        <div *ngIf="!tickerChoice; then thenBlock; else elseBlock"></div>
+        <ng-template #thenBlock>
+            <br>
+            <br>        
+            <h1>WELCOME!</h1>
+            <br>
+            <h1>LET'S VISUALIZE SOME STOCK DATA...</h1>
+            <br>
+            <br>
+        </ng-template>
+        <ng-template #elseBlock></ng-template>
+        <br>    
+        <div *ngIf="lastUpdated && tickerChoice && isHidden; then updateBlock"></div>
+        <ng-template #updateBlock>
+            <br>        
+            <h1>LAST QUANDL API STOCK DATA WAS RECEIVED FOR {{tickerChoice}} AT {{lastUpdated}}</h1>
+            <p>(AUTOMATICALLY REFRESHES EVERY 2 MINUTES)</p>
+        </ng-template>
 
-    </select>
-</div>
+        <br>
+        <div class="form-group">
+            <label class="label" for="tickerControl">SELECT A TICKER TO DISPLAY: </label>
+            <select class="form-control" id="tickerControl" [(ngModel)]="tickerChoice" name="tickerControl"
+                (change)="getCharts(tickerChoice)">
+                <option value="" selected disabled hidden>CHOOSE</option>
+                <option *ngFor="let ticker of tickers" [value]="ticker">{{ticker}}</option>
 
-<h3> {{tickerChoice}} </h3>
+            </select>
+        </div>
+        <br>
+        <div [hidden]="isHidden" class="lds-roller">LOADING<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        
+        <br>
+        <div class="graph" id="ohlc-chart"></div>
+        <br>
+        <div class="graph" id="candle-chart"></div>
 
-<div id="ohlc-chart"></div>
-<br>
-<div id="candle-chart"></div>
+
+    </div>
+</section>

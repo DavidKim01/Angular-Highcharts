@@ -8,11 +8,17 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { OutputGraphComponent } from './output-graph/output-graph.component';
 import { HttpClientModule } from '@angular/common/http';
+import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
+import { AboutComponent } from './about/about.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     OutputGraphComponent,
+    HeaderComponent,
+    FooterComponent,
+    AboutComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,9 @@
+* {
+    font-family: 'Unica One', cursive;
+}
+h1{
+    font-size: 150%;
+}
+.hero {
+    background-image: linear-gradient( 109.6deg,  rgba(5,85,84,1) 11.2%, rgba(64,224,208,1) 91.1% );
+}
