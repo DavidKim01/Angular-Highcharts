@@ -303,7 +303,8 @@ export class OutputGraphComponent implements OnInit, OnChanges {
       }).finally(()=>{this.isHidden=true; this.lastUpdated = new Date().toLocaleTimeString();})
     );
 
-    // I had initially used the Highcharts.getJSON method to fetch the data but decided to forgo this when adding the 
+    // I had initially used the Highcharts.getJSON method to fetch the data but decided to create a subscription instead
+    // also although the parsing of data is more consise here I decided to use a simpler method of parsing the data, shown in the get charts method 
     /*
     Highcharts.getJSON(`${this.tickerUrl}${tickerSelected}.json?api_key=${this.apiKey}`, function (data) {
       let parsedData: [][] = data.dataset.data.map((entry) => {
