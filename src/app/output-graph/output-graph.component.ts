@@ -26,30 +26,33 @@ const tickerUrl: string = 'https://www.quandl.com/api/v3/datasets/WIKI/';
 })
 export class OutputGraphComponent implements OnInit, OnChanges {
   tickers: string[] = ['AAPL', 'IBM', 'C', 'AXP', 'CVS', 'GE', 'MSFT'];
-  tickerChoice: string = '';
+  tickerChoice: string = "";
+  isHidden:boolean = true;
+  updated:boolean = false;
+  lastUpdated:string = '';
 
   subscription: Subscription;
-  source: Observable<number> = timer(0, 120000);
+  source: Observable<number> = timer(0, 12000);
 
   constructor(private _http: HttpService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  ngOnChanges() {
+  ngOnChanges(): void {
     this.getCharts(this.tickerChoice);
   }
 
-  getCharts(tickerSelected: string) {
-
+  getCharts(tickerSelected: string): void {
+    this.isHidden = false;
+    this.updated = true;
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
     this.subscription = this.source.subscribe(val => this._http.getData(`${tickerUrl}${tickerSelected}.json?api_key=${apiKey}`).then(
       function (data: any) {
         let timeStamp: Date = new Date();
-        console.log("Fetched new API data at: " + timeStamp.toLocaleTimeString());
-
+        console.log("Performing new GET request at: " + timeStamp.toLocaleTimeString());
         let parsedData: any[] = [];
         let volumes: any[] = [];
         let dataSize: number = data.dataset.data.length;
@@ -298,7 +301,7 @@ export class OutputGraphComponent implements OnInit, OnChanges {
       },
       error => {
         console.log('Error in getting data...');
-      })
+      }).finally(()=>{this.isHidden=true; this.lastUpdated = new Date().toLocaleTimeString()})
     );
 
     // I had initially used the Highcharts.getJSON method to fetch the data but decided to forgo this when adding the 
