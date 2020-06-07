@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms'
+
 import * as Highcharts from 'highcharts'
 import HC_stock from 'highcharts/modules/stock';
 import HC_exporting from 'highcharts/modules/exporting';
@@ -24,29 +26,26 @@ const tickerUrl: string = 'https://www.quandl.com/api/v3/datasets/WIKI/';
 })
 export class BuildChartComponent implements OnInit {
 
-  constructor() { }
+  myForm: FormGroup;
+
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    this.myForm = this.fb.group({
+      email: '',
+      message: '',
+      career: ''
+    })
+
     this.buildCharts();
   }
 
   buildCharts() {
     Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function(data) {
-
-  // Create the chart
-  Highcharts.stockChart('container', {
-
-
-    rangeSelector: {
-      selected: 2
-    },
-
-    title: {
-      text: 'AAPL Stock Price'
-    },
-
-    series: [{
-      name: 'AAPL Stock Price',
+      
+    let x: Highcharts.SeriesLineOptions[] = [{
+      name: 'zen',
+      id: '1',
       type: "line",
       data: data,
       lineWidth: 0,
@@ -63,9 +62,55 @@ export class BuildChartComponent implements OnInit {
           lineWidthPlus: 0
         }
       }
-    }]
+    }];
+    let y: Highcharts.SeriesLineOptions = {
+      name: 'aapl',
+      id: '2',
+      type: "line",
+      data: data,
+      lineWidth: 0,
+      marker: {
+        enabled: true,
+        radius: 2,
+        symbol: 'square'
+      },
+      tooltip: {
+        valueDecimals: 2
+      },
+      states: {
+        hover: {
+          lineWidthPlus: 0
+        }
+      }
+    };
+    
+    
+    x.push(y);
+    
+  // Create the chart
+  let z = Highcharts.stockChart('container', {
+
+
+    rangeSelector: {
+      selected: 2
+    },
+
+    title: {
+      text: 'AAPL Stock Price'
+    },
+
+    series: x
   });
+  let opt: Highcharts.Options = {
+    title: {
+      text: 'xyz Stock Price'
+    }
+  }
+
+  setTimeout(function(){ z.update(opt, false, true); }, 5000);
+  
 });
+
 
   }
 }

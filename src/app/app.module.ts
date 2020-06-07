@@ -1,13 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HighchartsChartModule } from 'highcharts-angular';
+import { AppRoutingModule } from './app-routing.module';
+import { HttpClientModule } from '@angular/common/http';
+
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { AppRoutingModule } from './app-routing.module';
+import { HighchartsChartModule } from 'highcharts-angular';
+
 import { AppComponent } from './app.component';
 import { OutputGraphComponent } from './output-graph/output-graph.component';
-import { HttpClientModule } from '@angular/common/http';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { AboutComponent } from './about/about.component';
@@ -28,7 +31,8 @@ import { BuildChartComponent } from './build-chart/build-chart.component';
     HttpClientModule,
     HighchartsChartModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
