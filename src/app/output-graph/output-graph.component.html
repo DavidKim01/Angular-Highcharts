@@ -16,7 +16,7 @@
         <div *ngIf="lastUpdated && tickerChoice && isHidden; then updateBlock"></div>
         <ng-template #updateBlock>
             <br>        
-            <h1>LAST QUANDL API STOCK DATA WAS RECEIVED FOR {{tickerChoice}} AT {{lastUpdated}}</h1>
+            <h1>QUANDL API WAS LAST QUERIED FOR {{tickerChoice}} STOCK DATA ON: {{lastUpdated}}</h1>
             <p>(AUTOMATICALLY REFRESHES EVERY 2 MINUTES)</p>
         </ng-template>
 
@@ -24,7 +24,7 @@
         <div class="form-group">
             <label class="label" for="tickerControl">SELECT A TICKER TO DISPLAY: </label>
             <select class="form-control" id="tickerControl" [(ngModel)]="tickerChoice" name="tickerControl"
-                (change)="getCharts(tickerChoice)">
+                (change)="parseData(tickerChoice)">
                 <option value="" selected disabled hidden>CHOOSE</option>
                 <option *ngFor="let ticker of tickers" [value]="ticker">{{ticker}}</option>
 
@@ -34,9 +34,9 @@
         <div [hidden]="isHidden" class="lds-roller">LOADING<div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
         
         <br>
-        <div class="graph" id="ohlc-chart"></div>
+        <div [hidden]="isBlank" class="graph" id="ohlc-chart"></div>
         <br>
-        <div class="graph" id="candle-chart"></div>
+        <div [hidden]="isBlank" class="graph" id="candle-chart"></div>
 
 
     </div>

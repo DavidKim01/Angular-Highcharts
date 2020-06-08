@@ -1,0 +1,58 @@
+<section class="hero is-info is-medium has-text-centered">
+    <div class="hero-body">
+      <div class="container is-centered">
+        <h1 class="title is-centered">
+          BUILD YOUR OWN POINT-MARKERS CHART
+        </h1>
+        <h2 class="subtitle">
+          ADD API LINKS BELOW TO POPULATE WITH SERIES DATA
+        </h2>
+      </div>
+    </div>
+
+    <div class= "graph" id="chart"></div>
+    <br>
+    <div class="container">
+        <form [formGroup]="myForm" >
+
+            Value: {{ myForm.value | json }}
+        
+            <hr>
+        
+            <mat-form-field class="full "color="accent">
+                <mat-label>CHOOSE AN OPTION</mat-label>
+                <mat-select formControlName="seriesType" required>
+                    <mat-option value="close">CLOSE</mat-option>
+                    <mat-option value="mid">MID</mat-option>
+                </mat-select>
+                <span *ngIf="seriesType.invalid && seriesType.touched" color="warn" >SERIES TYPE REQUIRED</span>
+            </mat-form-field>
+        
+            <div formArrayName="urls">
+        
+                <div *ngFor="let url of urlForms.controls; let i=index" [formGroupName]="i">
+        
+        
+                    <mat-form-field color="accent">
+                        <input matInput placeholder="ENTER A VALID QUANDL URL" formControlName="url" >
+                        <span *ngIf="url.untouched">
+                          URL REQUIRED
+                        </span>
+                        <span *ngIf="">
+                          
+                        </span>
+                    </mat-form-field>
+                    
+                    <button mat-raised-button color="warn" (click)="deleteUrl(i)">X</button>
+        
+                </div>
+        
+            </div>
+        
+            <button mat-raised-button color="accent" (click)="addUrl()">ADD</button>
+            <button mat-raised-button color="accent" [disabled]="myForm.invalid || urlForms.value.length < 1 || validateUrls()" (click)="submitHandler(); validateUrls()">BUILD CHART</button>
+            <button mat-raised-button color="accent" (click)="resetForms()">CLEAR CHART</button>
+        </form>
+        <br>
+    </div>
+  </section>
