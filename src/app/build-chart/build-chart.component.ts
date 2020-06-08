@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms'
+import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms'
 
 import * as Highcharts from 'highcharts'
 import HC_stock from 'highcharts/modules/stock';
@@ -27,20 +27,66 @@ const tickerUrl: string = 'https://www.quandl.com/api/v3/datasets/WIKI/';
 export class BuildChartComponent implements OnInit {
 
   myForm: FormGroup;
-
+  
+  
   constructor(private fb: FormBuilder) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.myForm = this.fb.group({
-      email: '',
-      message: '',
-      career: ''
-    })
-
+      seriesType: ['',[
+        Validators.required
+      ]],
+      urls: this.fb.array([])
+    });
     this.buildCharts();
   }
 
+  get urlForms() {
+    return this.myForm.get('urls') as FormArray;
+    
+  }
+
+  get seriesType() {
+    return this.myForm.get('seriesType');
+  }
+
+  validateUrls(): boolean {
+    let isEmpty: boolean = false;
+
+    this.urlForms.value.forEach(element => {
+      if(element.url.length < 1){
+        isEmpty=true;
+      }
+    });
+    return isEmpty;
+  }
+
+  resetForms() {
+    this.myForm.reset();
+  }
+
+  addUrl() {
+
+    const url = this.fb.group({ 
+      url: ''
+    });
+
+    this.urlForms.push(url);
+    let num = [];
+    
+    console.log(this.urlForms.value.length);
+  }
+
+  deleteUrl(i) {
+    this.urlForms.removeAt(i);
+  }
+
+  submitHandler() {
+    console.log("valid data supplied!")
+  }
+
   buildCharts() {
+    console.log(this.myForm.value.urls);
     Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function(data) {
       
     let x: Highcharts.SeriesLineOptions[] = [{
@@ -88,7 +134,7 @@ export class BuildChartComponent implements OnInit {
     x.push(y);
     
   // Create the chart
-  let z = Highcharts.stockChart('container', {
+  let z = Highcharts.stockChart('chart', {
 
 
     rangeSelector: {
@@ -107,7 +153,7 @@ export class BuildChartComponent implements OnInit {
     }
   }
 
-  setTimeout(function(){ z.update(opt, false, true); }, 5000);
+  //setTimeout(function(){ z.update(opt, false, true); }, 5000);
   
 });
 
