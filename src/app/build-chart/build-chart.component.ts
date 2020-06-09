@@ -34,6 +34,8 @@ export class BuildChartComponent implements OnInit {
   myForm: FormGroup;
   myChart: Highcharts.Chart;
   initialOptions: Object;
+  tickersLength: number;
+  tickersCount: number = 0;
   cache: Object = {};
 
   constructor(private fb: FormBuilder, private _http: HttpService) { }
@@ -47,6 +49,7 @@ export class BuildChartComponent implements OnInit {
       urls: this.fb.array([])
     });
     this.initializeChart();
+    
     
     //setTimeout(()=>{this.myChart.showLoading('LOADING...');},3000)
   }
@@ -106,6 +109,9 @@ export class BuildChartComponent implements OnInit {
         style: {
           opacity: 1
         }
+      },
+      navigator: {
+        enabled: false
       }
 
       
@@ -144,6 +150,7 @@ export class BuildChartComponent implements OnInit {
       ]],
       urls: this.fb.array([])
     });
+    this.tickersCount = 0;
   }
 
   addUrl() {
@@ -160,35 +167,43 @@ export class BuildChartComponent implements OnInit {
   }
 
   submitHandler() {
+    this.myChart.update({
+      navigator:{
+        enabled: true
+      }
+    });
     this.myChart.showLoading('LOADING...');
     let urls = this.urlsArray;
     let type = this.seriesType.value;
     let tickersList: string[] = urls.map(e=>{return e.substring(44, e.length-5)});
-    
-    tickersList = tickersList.filter((ticker, index)=>{
+    this.tickersLength = tickersList.length;
+
+    let filteredTickersList = tickersList.filter((ticker, index)=>{
       return tickersList.indexOf(ticker) === index;
     })
-    this.checkData(tickersList, type);
+    
+    this.checkData(filteredTickersList, type);
   }
 
   checkData(tickersList: string[], type: string){
     console.log(`Tickers selected: ${tickersList}`);
-
-
+    
     tickersList.forEach(ticker=>{
       //if ticker data is already in cache
       let cacheName = `${ticker}-${type}`;
-
       if (this.cache.hasOwnProperty(cacheName)){
+        this.tickersCount += 1;
         console.log(`${cacheName} data exists in cache! No REST call needed.`);
         this.updateCharts(this.cache[cacheName], type, ticker);
-        this.myChart.hideLoading();
+        if (this.tickersCount >= this.tickersLength){
+          this.myChart.hideLoading();
+        }
       }
       else {
-        
+        this.myChart.showLoading();
         console.log(`Performing GET request for TICKER: ${ticker}`);
         this._http.getData(`${tickerUrl}${ticker}.json?api_key=${apiKey}`).then((data:any)=>{
-
+          
           //parse data
           let parsedMidData: any[] = [];
           let parsedCloseData: any[] = [];
@@ -231,11 +246,17 @@ export class BuildChartComponent implements OnInit {
             let results: [string, string, any[]] = [ticker, type, parsedCloseData];
             return results;
           }
-
+          
         }).then(results=>{
           let cacheName = `${results[0]}-${results[1]}`;
           this.cache[cacheName] = results[2];
-        }).finally(()=>{this.myChart.hideLoading();});
+          this.tickersCount += 1;
+        }).finally(()=>{
+          if (this.tickersCount >= this.tickersLength){
+            this.myChart.hideLoading();
+            console.log("FINISHED ALL GET REQUESTS")
+          }
+        });
         
       }
       
@@ -244,7 +265,6 @@ export class BuildChartComponent implements OnInit {
   }
 
   updateCharts(parsedData: any[], type: string, ticker: string) {
-    this.myChart.update({});
     let newSeries: Highcharts.SeriesOptionsType = {
       name: `${ticker} ${type}`,
       type: "line",
