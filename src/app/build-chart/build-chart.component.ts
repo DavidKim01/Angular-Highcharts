@@ -87,7 +87,6 @@ export class BuildChartComponent implements OnInit {
         }],
         selected: 3
       },
-
       title: {
         text: 'Custom Point Markers Only Chart'
       },
@@ -245,6 +244,7 @@ export class BuildChartComponent implements OnInit {
   }
 
   updateCharts(parsedData: any[], type: string, ticker: string) {
+    this.myChart.update({});
     let newSeries: Highcharts.SeriesOptionsType = {
       name: `${ticker} ${type}`,
       type: "line",
