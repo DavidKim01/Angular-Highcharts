@@ -181,8 +181,9 @@ export class BuildChartComponent implements OnInit {
       let cacheName = `${ticker}-${type}`;
 
       if (this.cache.hasOwnProperty(cacheName)){
-        console.log(`${cacheName} data exists in cache! Avoiding GET`);
+        console.log(`${cacheName} data exists in cache! No REST call needed.`);
         this.updateCharts(this.cache[cacheName], type, ticker);
+        this.myChart.hideLoading();
       }
       else {
         
@@ -240,6 +241,7 @@ export class BuildChartComponent implements OnInit {
       }
       
     });
+    
   }
 
   updateCharts(parsedData: any[], type: string, ticker: string) {
