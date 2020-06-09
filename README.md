@@ -1,27 +1,21 @@
-# AngularHighcharts
+# Angular Highcharts - Stock Chart App
+This Single Page Application, built using [Angular](https://github.com/angular/angular-cli) (CLI version 9.1.7), will both display stock data for several companies and allow users to display MID and CLOSE stock values for companies when provided with a valid QUANDL url.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.7.
+[Highcharts/Highstock](https://www.highcharts.com/) libraries are used to generate the charts and [Quandl](https://www.quandl.com/) API's are used as data sources
+## Live Environment
 
-## Development server
+The Web application has been deployed via firebase and is accessible through either of the following links:
+
+https://highcharts-angular.web.app/
+
+
+MIRROR: https://highcharts-angular.firebaseapp.com/
+
+## Development Server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
 ## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+If you find any bugs, please create a new issue ticket at:
+https://github.com/DavidKim01/Angular-Highcharts/issues
