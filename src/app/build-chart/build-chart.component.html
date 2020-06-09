@@ -12,18 +12,13 @@
 
     <div class= "graph" id="chart"></div>
     <br>
-    <div class="container">
+    <div >
         <form [formGroup]="myForm" >
-
-            Value: {{ myForm.value | json }}
-        
-            <hr>
-        
-            <mat-form-field class="full "color="accent">
+            <mat-form-field class="series" color="accent">
                 <mat-label>CHOOSE AN OPTION</mat-label>
-                <mat-select formControlName="seriesType" required>
-                    <mat-option value="close">CLOSE</mat-option>
-                    <mat-option value="mid">MID</mat-option>
+                <mat-select formControlName="seriesType">
+                    <mat-option value="CLOSE">CLOSE</mat-option>
+                    <mat-option value="MID">MID</mat-option>
                 </mat-select>
                 <span *ngIf="seriesType.invalid && seriesType.touched" color="warn" >SERIES TYPE REQUIRED</span>
             </mat-form-field>
@@ -31,16 +26,8 @@
             <div formArrayName="urls">
         
                 <div *ngFor="let url of urlForms.controls; let i=index" [formGroupName]="i">
-        
-        
                     <mat-form-field color="accent">
-                        <input matInput placeholder="ENTER A VALID QUANDL URL" formControlName="url" >
-                        <span *ngIf="url.untouched">
-                          URL REQUIRED
-                        </span>
-                        <span *ngIf="">
-                          
-                        </span>
+                        <input matInput placeholder="ENTER A VALID QUANDL URL" formControlName="url">&nbsp;
                     </mat-form-field>
                     
                     <button mat-raised-button color="warn" (click)="deleteUrl(i)">X</button>
@@ -48,10 +35,13 @@
                 </div>
         
             </div>
-        
-            <button mat-raised-button color="accent" (click)="addUrl()">ADD</button>
+            <div>
+              <button mat-raised-button color="accent" (click)="addUrl()">ADD</button>
+            </div>
+            <br>
+            <button mat-raised-button color="accent" (click)="resetForms(); initializeChart();">CLEAR CHART</button>&nbsp;
+            <button mat-raised-button color="accent" (click)="clearCache()">CLEAR CACHED DATA</button>&nbsp;
             <button mat-raised-button color="accent" [disabled]="myForm.invalid || urlForms.value.length < 1 || validateUrls()" (click)="submitHandler(); validateUrls()">BUILD CHART</button>
-            <button mat-raised-button color="accent" (click)="resetForms()">CLEAR CHART</button>
         </form>
         <br>
     </div>

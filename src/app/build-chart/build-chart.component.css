@@ -1,14 +1,28 @@
 * {
-    color: mintcream;
+    
     font-family: 'Unica One', cursive;
 }
 .hero {
-    
+    color: mintcream;
     background-image: linear-gradient( 109.6deg,  rgba(5,85,84,1) 11.2%, rgba(64,224,208,1) 91.1% );
 }
 
 .graph {
+    color: rgb(39, 95, 79);
     margin: auto;
     width: 75%;
     padding: 20px;
+}
+
+.series{
+    width: fit-content;
+}
+
+input {
+    font-size: large;
+    width: 100%;
+}
+
+mat-form-field  {
+    width: 65%;
 }
