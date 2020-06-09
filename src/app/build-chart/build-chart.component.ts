@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms'
 
+import { HttpService } from '../http.service';
+
 import * as Highcharts from 'highcharts'
 import HC_stock from 'highcharts/modules/stock';
 import HC_exporting from 'highcharts/modules/exporting';
 import HC_export from 'highcharts/modules/export-data';
 import HC_data from 'highcharts/modules/data';
 import HC_indicators from 'highcharts/indicators/indicators';
+import HC_nodata from 'highcharts/modules/no-data-to-display'
+
 import theme from 'highcharts/themes/dark-unica';
 
 HC_stock(Highcharts);
@@ -14,6 +18,7 @@ HC_exporting(Highcharts);
 HC_export(Highcharts);
 HC_data(Highcharts);
 HC_indicators(Highcharts);
+HC_nodata(Highcharts);
 theme(Highcharts);
 
 const apiKey: string = 'qPkR3WAyaVxXgh6hFAJi';
@@ -27,54 +32,128 @@ const tickerUrl: string = 'https://www.quandl.com/api/v3/datasets/WIKI/';
 export class BuildChartComponent implements OnInit {
 
   myForm: FormGroup;
-  
-  
-  constructor(private fb: FormBuilder) { }
+  myChart: Highcharts.Chart;
+  initialOptions: Object;
+  cache: Object = {};
+
+  constructor(private fb: FormBuilder, private _http: HttpService) { }
 
   ngOnInit() {
+
     this.myForm = this.fb.group({
       seriesType: ['',[
         Validators.required
       ]],
       urls: this.fb.array([])
     });
-    this.buildCharts();
+    this.initializeChart();
+    
+    //setTimeout(()=>{this.myChart.showLoading('LOADING...');},3000)
+  }
+
+  initializeChart(){
+    this.initialOptions = {
+      legend: {
+        enabled: true,
+        verticalAlign: 'top'
+      },
+      rangeSelector: {
+        buttons: [{
+          type: 'week',
+          count: 1,
+          text: '1w'
+        }, {
+          type: 'month',
+          count: 1,
+          text: '1m'
+        }, {
+          type: 'month',
+          count: 3,
+          text: '3m'
+        }, {
+          type: 'month',
+          count: 6,
+          text: '6m'
+        }, {
+          type: 'year',
+          count: 1,
+          text: '1y'
+        }, {
+          type: 'ytd',
+          text: 'YTD'
+        }, {
+          type: 'all',
+          text: 'All'
+        }],
+        selected: 3
+      },
+
+      title: {
+        text: 'Custom Point Markers Only Chart'
+      },
+      lang: {
+        noData: "NO DATA ENTERED. PLEASE FILL OPTIONS BELOW."
+      },
+      noData: {
+        style: {
+            fontSize: '2em',
+            color: '#E0E0E3',
+            backgroundColor: '#E0E0E3'
+        }
+      },
+      loading: {
+        hideDuration: 200,
+        showDuration: 300,
+        style: {
+          opacity: 1
+        }
+      }
+
+      
+    };
+    this.myChart = Highcharts.stockChart('chart', this.initialOptions);
   }
 
   get urlForms() {
     return this.myForm.get('urls') as FormArray;
     
   }
-
+  get urlsArray(){
+    let urlsArr = [];
+    this.urlForms.value.forEach(element => {urlsArr.push(element.url)})
+    return urlsArr;
+  }
   get seriesType() {
     return this.myForm.get('seriesType');
   }
 
   validateUrls(): boolean {
-    let isEmpty: boolean = false;
+    let isWrong: boolean = false;
 
     this.urlForms.value.forEach(element => {
-      if(element.url.length < 1){
-        isEmpty=true;
+      if(element.url.length < 1 || !element.url.startsWith("https://www.quandl.com/api/v3/datasets/WIKI/")){
+        isWrong=true;
       }
     });
-    return isEmpty;
+    return isWrong;
   }
 
   resetForms() {
-    this.myForm.reset();
+    this.myForm = this.fb.group({
+      seriesType: ['',[
+        Validators.required
+      ]],
+      urls: this.fb.array([])
+    });
   }
 
   addUrl() {
-
     const url = this.fb.group({ 
       url: ''
     });
 
     this.urlForms.push(url);
     let num = [];
-    
-    console.log(this.urlForms.value.length);
   }
 
   deleteUrl(i) {
@@ -82,43 +161,96 @@ export class BuildChartComponent implements OnInit {
   }
 
   submitHandler() {
-    console.log("valid data supplied!")
+    this.myChart.showLoading('LOADING...');
+    let urls = this.urlsArray;
+    let type = this.seriesType.value;
+    let tickersList: string[] = urls.map(e=>{return e.substring(44, e.length-5)});
+    
+    tickersList = tickersList.filter((ticker, index)=>{
+      return tickersList.indexOf(ticker) === index;
+    })
+    this.checkData(tickersList, type);
   }
 
-  buildCharts() {
-    console.log(this.myForm.value.urls);
-    Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-c.json', function(data) {
-      
-    let x: Highcharts.SeriesLineOptions[] = [{
-      name: 'zen',
-      id: '1',
-      type: "line",
-      data: data,
-      lineWidth: 0,
-      marker: {
-        enabled: true,
-        radius: 2,
-        symbol: 'square'
-      },
-      tooltip: {
-        valueDecimals: 2
-      },
-      states: {
-        hover: {
-          lineWidthPlus: 0
-        }
+  checkData(tickersList: string[], type: string){
+    console.log(`Tickers selected: ${tickersList}`);
+
+
+    tickersList.forEach(ticker=>{
+      //if ticker data is already in cache
+      let cacheName = `${ticker}-${type}`;
+
+      if (this.cache.hasOwnProperty(cacheName)){
+        console.log(`${cacheName} data exists in cache! Avoiding GET`);
+        this.updateCharts(this.cache[cacheName], type, ticker);
       }
-    }];
-    let y: Highcharts.SeriesLineOptions = {
-      name: 'aapl',
-      id: '2',
+      else {
+        
+        console.log(`Performing GET request for TICKER: ${ticker}`);
+        this._http.getData(`${tickerUrl}${ticker}.json?api_key=${apiKey}`).then((data:any)=>{
+
+          //parse data
+          let parsedMidData: any[] = [];
+          let parsedCloseData: any[] = [];
+          let dataSize: number = data.dataset.data.length;
+
+          let datePulled: Date = new Date();
+          let dateArray: string[] = [];
+          let dateInMs: number = 0;
+          
+          for (let i: number = dataSize - 1; i >= 0; i -= 1){
+            dateArray = data.dataset.data[i][0].split('-');
+            datePulled = new Date(parseInt(dateArray[0], 10), parseInt(dateArray[1], 10) - 1, parseInt(dateArray[2], 10));
+            dateInMs = datePulled.getTime();
+
+            if(type==="MID"){
+              parsedMidData.push([
+                dateInMs, //date
+                (data.dataset.data[i][2]+data.dataset.data[i][2])/2 //Mid = (High + Low) / 2
+              ]);
+
+            }
+
+            else {
+              parsedCloseData.push([
+                dateInMs, //date
+                data.dataset.data[i][1] //close
+              ]);
+            }
+            
+          }
+
+          //update charts with parsed mid or close data
+          if(type==="MID"){
+            this.updateCharts(parsedMidData, type, ticker);
+            let results: [string, string, any[]] = [ticker, type, parsedMidData];
+            return results;
+          }
+          else {
+            this.updateCharts(parsedCloseData, type, ticker);
+            let results: [string, string, any[]] = [ticker, type, parsedCloseData];
+            return results;
+          }
+
+        }).then(results=>{
+          let cacheName = `${results[0]}-${results[1]}`;
+          this.cache[cacheName] = results[2];
+        }).finally(()=>{this.myChart.hideLoading();});
+        
+      }
+      
+    });
+  }
+
+  updateCharts(parsedData: any[], type: string, ticker: string) {
+    let newSeries: Highcharts.SeriesOptionsType = {
+      name: `${ticker} ${type}`,
       type: "line",
-      data: data,
+      data: parsedData,
       lineWidth: 0,
       marker: {
         enabled: true,
-        radius: 2,
-        symbol: 'square'
+        radius: 2
       },
       tooltip: {
         valueDecimals: 2
@@ -130,33 +262,10 @@ export class BuildChartComponent implements OnInit {
       }
     };
     
-    
-    x.push(y);
-    
-  // Create the chart
-  let z = Highcharts.stockChart('chart', {
-
-
-    rangeSelector: {
-      selected: 2
-    },
-
-    title: {
-      text: 'AAPL Stock Price'
-    },
-
-    series: x
-  });
-  let opt: Highcharts.Options = {
-    title: {
-      text: 'xyz Stock Price'
-    }
+    this.myChart.addSeries(newSeries, true);
   }
 
-  //setTimeout(function(){ z.update(opt, false, true); }, 5000);
-  
-});
-
-
+  clearCache(){
+    this.cache = {};
   }
 }
